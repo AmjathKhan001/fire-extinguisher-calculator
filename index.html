@@ -29,7 +29,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <div class="container">
@@ -523,7 +523,7 @@
     </div>
 
     <!-- JavaScript -->
-    <script src="/script.js"></script>
+    <script src="./script.js"></script>
     
     <!-- Google Translate Script -->
     <script>
@@ -537,15 +537,23 @@
             }
         }
         
-        // Load Google Translate API
-        function loadGoogleTranslate() {
+        // Load Google Translate after page loads
+        window.addEventListener('DOMContentLoaded', function() {
             var script = document.createElement('script');
             script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
             document.body.appendChild(script);
-        }
-        
-        // Load Google Translate after page loads
-        window.addEventListener('DOMContentLoaded', loadGoogleTranslate);
+            
+            // Initialize basic FAQ functionality
+            setTimeout(function() {
+                const faqQuestions = document.querySelectorAll('.faq-question');
+                faqQuestions.forEach(question => {
+                    question.addEventListener('click', function() {
+                        const faqItem = this.parentElement;
+                        faqItem.classList.toggle('active');
+                    });
+                });
+            }, 500);
+        });
     </script>
 </body>
 </html>
