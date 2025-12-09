@@ -27,10 +27,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
     <div class="container">
@@ -417,8 +416,88 @@
             <div class="result-card">
                 <h3>❓ Frequently Asked Questions (FAQ)</h3>
                 <div class="faq-section">
-                    <!-- FAQ content remains similar to previous version -->
-                    <!-- ... -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Q1: What is BIS 2190:2024 standard?
+                        </div>
+                        <div class="faq-answer">
+                            BIS 2190:2024 is the latest Indian Standard for portable fire extinguishers. It specifies requirements for construction, performance, testing, and maintenance of fire extinguishers used in various premises.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Q2: How many fire extinguishers do I need per floor?
+                        </div>
+                        <div class="faq-answer">
+                            As per BIS standards, each floor with area ≥100m² requires minimum 2 extinguishers. The exact number depends on floor area, hazard level, and maximum travel distance (15-20 meters).
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Q3: What type of extinguisher for kitchen fires?
+                        </div>
+                        <div class="faq-answer">
+                            Kitchens require Class F/K wet chemical extinguishers specifically designed for cooking oil and fat fires. Regular ABC extinguishers are NOT suitable for kitchen fires.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Q4: How often should fire extinguishers be inspected?
+                        </div>
+                        <div class="faq-answer">
+                            • Monthly: Visual inspection<br>
+                            • Quarterly: Detailed inspection<br>
+                            • Annually: Full maintenance by certified technician<br>
+                            • Every 5 years: Hydrostatic testing (pressure vessels)
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Q5: What is the maximum travel distance to extinguisher?
+                        </div>
+                        <div class="faq-answer">
+                            • Low hazard areas: 20 meters<br>
+                            • Moderate hazard: 20 meters<br>
+                            • High hazard: 15 meters<br>
+                            This ensures extinguishers are accessible within 30 seconds.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Q6: Can I use the same extinguisher for all fire types?
+                        </div>
+                        <div class="faq-answer">
+                            No. Different fire classes require specific agents:<br>
+                            • Class A (wood/paper): Water, Foam, ABC<br>
+                            • Class B (flammable liquids): CO₂, Foam, ABC<br>
+                            • Class C (electrical): CO₂, Clean Agent<br>
+                            • Class F (cooking oils): Wet Chemical<br>
+                            ABC powder works for A, B, C but not for F or special hazards.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Q7: Is this calculator suitable for industrial buildings?
+                        </div>
+                        <div class="faq-answer">
+                            Yes! Our expert mode includes 168+ extinguisher types specifically for industrial applications including chemical plants, warehouses, manufacturing units, and special hazard areas.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Q8: How accurate are the cost estimates?
+                        </div>
+                        <div class="faq-answer">
+                            Prices are based on current market rates for BIS-certified equipment. Actual costs may vary by 10-15% based on location, brand, installation charges, and GST rates. Always get quotes from multiple suppliers.
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -444,6 +523,29 @@
     </div>
 
     <!-- JavaScript -->
-    <script src="script.js"></script>
+    <script src="/script.js"></script>
+    
+    <!-- Google Translate Script -->
+    <script>
+        function googleTranslateElementInit() {
+            if (window.google && window.google.translate) {
+                new google.translate.TranslateElement({
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,hi,ta,te,ml,kn,bn,mr,gu,pa,ur,es,fr,de,zh,ja,ar,ru',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+                }, 'google_translate_element');
+            }
+        }
+        
+        // Load Google Translate API
+        function loadGoogleTranslate() {
+            var script = document.createElement('script');
+            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+            document.body.appendChild(script);
+        }
+        
+        // Load Google Translate after page loads
+        window.addEventListener('DOMContentLoaded', loadGoogleTranslate);
+    </script>
 </body>
 </html>
