@@ -1,0 +1,21 @@
+{
+  "name": "fire-extinguisher-calculator",
+  "version": "1.0.0",
+  "description": "Professional fire extinguisher requirements calculator for fire safety experts, consultants, and engineers. Compliant with BIS 2190:2024 standards.",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "fire-extinguisher",
+    "fire-safety",
+    "BIS-2190:2024",
+    "calculator"
+  ],
+  "author": "S. Amjath Khan",
+  "license": "MIT",
+  "dependencies": {
+    "@vercel/analytics": "^1.4.2"
+  }
+}
