@@ -51,13 +51,23 @@ document.addEventListener('DOMContentLoaded', function() {
     loadFireExtinguishers();
     initializeForm();
     setupEventListeners();
-    initializeGoogleTranslate();
+    initializeFAQ(); // Initialize FAQ functionality
 });
+
+// Initialize FAQ functionality
+function initializeFAQ() {
+    document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', function() {
+            const faqItem = this.parentElement;
+            faqItem.classList.toggle('active');
+        });
+    });
+}
 
 // Load fire extinguisher data from JSON
 async function loadFireExtinguishers() {
     try {
-        const response = await fetch('fire-extinguishers.json');
+        const response = await fetch('/fire-extinguishers.json');
         const data = await response.json();
         AppState.fireExtinguishers = data.fireExtinguishers;
         console.log(`Loaded ${AppState.fireExtinguishers.length} fire extinguishers`);
@@ -85,30 +95,10 @@ async function loadFireExtinguishers() {
     }
 }
 
-// Initialize Google Translate
-function initializeGoogleTranslate() {
-    function googleTranslateElementInit() {
-        if (window.google && window.google.translate) {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'en,hi,ta,te,ml,kn,bn,mr,gu,pa,ur,es,fr,de,zh,ja,ar,ru',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
-        } else {
-            console.log('Google Translate not loaded');
-        }
-    }
-    
-    window.googleTranslateElementInit = googleTranslateElementInit;
-}
-
 // Initialize form and event listeners
 function initializeForm() {
     // Form submission
     document.getElementById('fireCalculator').addEventListener('submit', handleFormSubmit);
-    
-    // Initialize first floor
-    renderFloorSection(1);
     
     // Initialize expert mode section
     renderExtinguisherGrid();
@@ -330,7 +320,14 @@ function setUnit(unit) {
     document.querySelectorAll('.unit-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    event.target.classList.add('active');
+    
+    // Activate the correct button
+    const buttons = document.querySelectorAll('.unit-btn');
+    if (unit === 'meters') {
+        buttons[0].classList.add('active');
+    } else {
+        buttons[1].classList.add('active');
+    }
     
     // Update labels and placeholders
     document.querySelectorAll('.unit-label').forEach(label => {
