@@ -306,7 +306,7 @@
                         <button type="button" class="btn btn-secondary" onclick="prevStep(3)">
                             ← Previous
                         </button>
-                        <button type="submit" class="btn" id="calculateBtn">
+                        <button type="button" class="btn" id="calculateBtn" onclick="calculateRequirements()">
                             Calculate Requirements
                         </button>
                     </div>
@@ -542,17 +542,6 @@
             var script = document.createElement('script');
             script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
             document.body.appendChild(script);
-            
-            // Initialize basic FAQ functionality
-            setTimeout(function() {
-                const faqQuestions = document.querySelectorAll('.faq-question');
-                faqQuestions.forEach(question => {
-                    question.addEventListener('click', function() {
-                        const faqItem = this.parentElement;
-                        faqItem.classList.toggle('active');
-                    });
-                });
-            }, 500);
         });
     </script>
 </body>
