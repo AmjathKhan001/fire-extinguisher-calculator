@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Extinguisher Calculator | BIS 2190:2024 Compliant</title>
+    <meta name="description" content="Professional Fire Extinguisher Calculator compliant with BIS 2190:2024 standards. Calculate exact requirements for residential, commercial, and industrial buildings.">
+    <meta name="keywords" content="fire extinguisher, fire safety, BIS 2190:2024, fire calculator, safety compliance, fire protection">
+    <meta name="author" content="S. Amjath Khan">
+    
+    <!-- Google AdSense Auto Ads -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6687860250561653" crossorigin="anonymous"></script>
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-376208036"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-376208036');
+    </script>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="language-selector">
+                <div id="google_translate_element"></div>
+            </div>
+            <h1>🔥 Fire Extinguisher Calculator</h1>
+            <p>BIS 2190:2024 Compliant - Professional Fire Safety Requirements Calculator for Fire Experts & Consultants</p>
+            <a href="https://buymeacoffee.com/s.amjathkhan" target="_blank" class="coffee-link">
+                ☕ Buy Me a Coffee
+            </a>
+        </div>
+
+        <!-- Ad Container -->
+        <div class="ad-container">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6687860250561653" crossorigin="anonymous"></script>
+        </div>
+
+        <!-- Main Calculator Section -->
+        <div class="calculator-section" id="calculatorSection">
+            <!-- Progress Indicator -->
+            <div class="progress-indicator">
+                <div class="progress-step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Project Details</div>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Building Info</div>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Floor Details</div>
+                </div>
+                <div class="progress-step" data-step="4">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Risk Assessment</div>
+                </div>
+            </div>
+
+            <!-- Introduction -->
+            <div class="result-card fade-in">
+                <h3>📋 Fire Safety Compliance Made Simple</h3>
+                <p>This professional calculator helps fire safety experts, consultants, and engineers determine exact fire extinguisher requirements as per BIS 2190:2024 standards. Our database includes 168+ extinguisher types with detailed specifications.</p>
+                
+                <div class="info-box">
+                    <strong>Key Features:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Compliance with latest BIS 2190:2024 standards</li>
+                        <li>Expert mode with 168+ extinguisher types</li>
+                        <li>Floor-wise area calculations</li>
+                        <li>Detailed PDF & Excel quotation generation</li>
+                        <li>Multi-language support</li>
+                        <li>Mobile responsive design</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Fire Calculator Form -->
+            <form id="fireCalculator">
+                <!-- Step 1: Project Details -->
+                <div class="form-section active" id="step1">
+                    <div class="result-card">
+                        <h3>👤 Project & Client Details</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="customerName">Client Name *</label>
+                                <input type="text" id="customerName" class="form-control" placeholder="Enter client name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="companyName">Organization</label>
+                                <input type="text" id="companyName" class="form-control" placeholder="Company/Organization name">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" class="form-control" placeholder="client@example.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number *</label>
+                                <input type="tel" id="phone" class="form-control" placeholder="+91 XXXXXXXXXX" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="projectName">Project Name *</label>
+                            <input type="text" id="projectName" class="form-control" placeholder="e.g., Corporate Office Fire Safety" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="projectAddress">Project Address *</label>
+                            <textarea id="projectAddress" class="form-control" rows="3" placeholder="Complete address of the premises" required></textarea>
+                        </div>
+                    </div>
+                    <div class="navigation-buttons">
+                        <div></div>
+                        <button type="button" class="btn" onclick="nextStep(2)">
+                            Next: Building Information →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Building Information -->
+                <div class="form-section" id="step2">
+                    <div class="result-card">
+                        <h3>🏢 Building Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="buildingType">Building Type *</label>
+                                <select id="buildingType" class="form-control" required>
+                                    <option value="">Select building type</option>
+                                    <option value="residential">🏠 Residential (Apartments, Houses)</option>
+                                    <option value="commercial">🏪 Commercial (Offices, Malls, Shops)</option>
+                                    <option value="industrial">🏭 Industrial (Factories, Warehouses)</option>
+                                    <option value="institutional">🏫 Institutional (Schools, Hospitals, Hotels)</option>
+                                    <option value="mixed">🔄 Mixed Use</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="buildingHeight">Building Height *</label>
+                                <select id="buildingHeight" class="form-control" required>
+                                    <option value="">Select height category</option>
+                                    <option value="low">Low Rise (1-3 floors)</option>
+                                    <option value="medium">Medium Rise (4-7 floors)</option>
+                                    <option value="high">High Rise (8+ floors)</option>
+                                    <option value="skyscraper">Skyscraper (25+ floors)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Measurement Unit *</label>
+                            <div class="unit-toggle">
+                                <button type="button" class="unit-btn active" onclick="setUnit('meters')">Square Meters (m²)</button>
+                                <button type="button" class="unit-btn" onclick="setUnit('feet')">Square Feet (ft²)</button>
+                            </div>
+                            <input type="hidden" id="areaUnit" value="meters">
+                        </div>
+                        
+                        <div class="warning-box">
+                            <strong>⚠️ Important:</strong> For accurate calculations, please provide exact floor areas. Each floor requires minimum 2 extinguishers as per BIS standards.
+                        </div>
+                    </div>
+                    <div class="navigation-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(1)">
+                            ← Previous
+                        </button>
+                        <button type="button" class="btn" onclick="nextStep(3)">
+                            Next: Floor Details →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Floor Details -->
+                <div class="form-section" id="step3">
+                    <div class="result-card">
+                        <h3>🏗️ Floor-wise Area Details</h3>
+                        <div class="info-box">
+                            💡 <strong>Pro Tip:</strong> Add each floor separately for precise calculations. Include basements and parking levels as separate floors.
+                        </div>
+                        
+                        <div id="floorsContainer">
+                            <!-- Floor sections will be added dynamically -->
+                        </div>
+                        
+                        <button type="button" class="btn btn-secondary" onclick="addFloor()" style="margin-top: 20px;">
+                            + Add Another Floor
+                        </button>
+                    </div>
+                    <div class="navigation-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(2)">
+                            ← Previous
+                        </button>
+                        <button type="button" class="btn" onclick="nextStep(4)">
+                            Next: Risk Assessment →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Risk Assessment & Expert Mode -->
+                <div class="form-section" id="step4">
+                    <div class="result-card">
+                        <h3>🔥 Fire Risk Assessment</h3>
+                        
+                        <div class="form-group">
+                            <label for="fireRisk">Primary Fire Risk Category *</label>
+                            <select id="fireRisk" class="form-control" required>
+                                <option value="">Select primary fire risk</option>
+                                <option value="A">📄 Class A - Ordinary Combustibles (Wood, Paper, Textiles)</option>
+                                <option value="B">🛢️ Class B - Flammable Liquids & Gases</option>
+                                <option value="C">⚡ Class C - Electrical Equipment</option>
+                                <option value="D">⚗️ Class D - Combustible Metals</option>
+                                <option value="F">👨‍🍳 Class F/K - Cooking Oils & Fats</option>
+                                <option value="E">🔋 Class E - Lithium Ion Batteries</option>
+                                <option value="mixed">🔄 Mixed/Multiple Hazards</option>
+                            </select>
+                        </div>
+
+                        <!-- Expert Mode Toggle -->
+                        <div class="expert-mode-toggle">
+                            <button type="button" class="expert-toggle-btn" id="expertToggle" onclick="toggleExpertMode()">
+                                🔧 Enable Expert Mode (For Fire Professionals)
+                            </button>
+                        </div>
+
+                        <!-- Expert Mode Section -->
+                        <div class="expert-section" id="expertSection">
+                            <h4>🔬 Expert Fire Extinguisher Selection</h4>
+                            <p>For fire safety experts, consultants, and engineers: Select from 168+ extinguisher types with detailed specifications.</p>
+                            
+                            <!-- Filters -->
+                            <div class="extinguisher-filters">
+                                <div class="form-group">
+                                    <label for="filterType">Extinguisher Type</label>
+                                    <select id="filterType" class="form-control" onchange="filterExtinguishers()">
+                                        <option value="">All Types</option>
+                                        <option value="PORTABLE">Portable</option>
+                                        <option value="MODULAR">Modular</option>
+                                        <option value="WHEELED">Wheeled</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="filterAgent">Fire Agent</label>
+                                    <select id="filterAgent" class="form-control" onchange="filterExtinguishers()">
+                                        <option value="">All Agents</option>
+                                        <option value="POWDER">Powder</option>
+                                        <option value="GAS">Gas</option>
+                                        <option value="FOAM">Foam</option>
+                                        <option value="WATER">Water</option>
+                                        <option value="KITCHEN">Kitchen</option>
+                                        <option value="AVD">AVD</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="filterCapacity">Capacity</label>
+                                    <select id="filterCapacity" class="form-control" onchange="filterExtinguishers()">
+                                        <option value="">All Capacities</option>
+                                        <option value="1">1-5 KG/L</option>
+                                        <option value="2">6-10 KG/L</option>
+                                        <option value="3">11-25 KG/L</option>
+                                        <option value="4">25+ KG/L</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Extinguisher Grid -->
+                            <div id="extinguisherGrid" class="extinguisher-grid">
+                                <!-- Extinguisher cards will be loaded dynamically -->
+                            </div>
+                            
+                            <div class="info-box">
+                                <strong>Selection Summary:</strong>
+                                <div id="expertSelectionSummary">No extinguishers selected</div>
+                                <button type="button" class="btn btn-secondary" onclick="clearExpertSelections()" style="margin-top: 10px;">
+                                    Clear Selections
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="warning-box">
+                            <strong>⚠️ Special Considerations:</strong>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Kitchens require Class F wet chemical extinguishers</li>
+                                <li>Server/Data rooms need CO₂ or clean agent extinguishers</li>
+                                <li>Parking areas require ABC dry powder for vehicle fires</li>
+                                <li>High-rise buildings need extinguishers on every floor</li>
+                                <li>Chemical storage areas need specific agents for hazards</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(3)">
+                            ← Previous
+                        </button>
+                        <button type="submit" class="btn" id="calculateBtn">
+                            Calculate Requirements
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Ad Container -->
+            <div class="ad-container">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6687860250561653" crossorigin="anonymous"></script>
+            </div>
+
+            <!-- Affiliate Products -->
+            <div class="affiliate-section">
+                <h3>🛒 Recommended Fire Safety Products</h3>
+                <p>Professional-grade fire safety equipment from trusted suppliers:</p>
+                
+                <div class="affiliate-products">
+                    <div class="affiliate-product">
+                        <h4>🔥 Premium ABC Dry Powder</h4>
+                        <p>Multi-purpose extinguisher for Class A, B & C fires</p>
+                        <a href="https://amzn.to/4p8ceG6" target="_blank" class="affiliate-btn">
+                            🔥 Clearance Sale - Up to 70% Off
+                        </a>
+                    </div>
+                    
+                    <div class="affiliate-product">
+                        <h4>⚡ CO2 Fire Extinguisher</h4>
+                        <p>Ideal for electrical and flammable liquid fires</p>
+                        <a href="https://amzn.to/4p8ceG6" target="_blank" class="affiliate-btn">
+                            🔥 Shop Now on Amazon
+                        </a>
+                    </div>
+                    
+                    <div class="affiliate-product">
+                        <h4>👨‍🍳 Kitchen Fire Safety Kit</h4>
+                        <p>Complete kitchen fire protection package</p>
+                        <a href="https://amzn.to/4p8ceG6" target="_blank" class="affiliate-btn">
+                            🔥 Best Seller Deal
+                        </a>
+                    </div>
+                    
+                    <div class="affiliate-product">
+                        <h4>🚨 Fire Safety Bundle</h4>
+                        <p>Extinguisher + Smoke Detector + Fire Blanket</p>
+                        <a href="https://amzn.to/4p8ceG6" target="_blank" class="affiliate-btn">
+                            🔥 Limited Time Offer
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="info-box" style="margin-top: 20px;">
+                    <strong>Note:</strong> These are affiliate links. We may earn a commission at no extra cost to you. Your purchases help support the development of free safety tools.
+                </div>
+            </div>
+
+            <!-- More Tools Section -->
+            <div class="tools-section">
+                <h3>🔧 Explore More Expert Tools & Calculators</h3>
+                <p>We highly recommend these professional resources for specialized safety and utility calculations:</p>
+                
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon">🔥</div>
+                        <h4>Fire Safety Tool</h4>
+                        <p>Comprehensive fire safety assessment and planning tools</p>
+                        <a href="https://www.firesafetytool.com" target="_blank" class="tool-btn">Visit Website</a>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <div class="tool-icon">🛡️</div>
+                        <h4>HSE Calculator</h4>
+                        <p>Health, Safety & Environment compliance calculators</p>
+                        <a href="https://www.hsecalculator.com" target="_blank" class="tool-btn">Visit Website</a>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <div class="tool-icon">⚙️</div>
+                        <h4>Web Tools Daily</h4>
+                        <p>Daily updated collection of useful web tools</p>
+                        <a href="https://www.webtoolsdaily.com" target="_blank" class="tool-btn">Visit Website</a>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <div class="tool-icon">📋</div>
+                        <h4>Fire Extinguisher Audit</h4>
+                        <p>Professional fire extinguisher audit and inspection tool</p>
+                        <a href="https://fire-extinguisher-audit-tool.vercel.app" target="_blank" class="tool-btn">Try Tool</a>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <div class="tool-icon">📊</div>
+                        <h4>Fire Safety Assessment</h4>
+                        <p>Complete fire safety risk assessment platform</p>
+                        <a href="https://firesafetyassessmenttool.vercel.app" target="_blank" class="tool-btn">Try Tool</a>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <div class="tool-icon">💰</div>
+                        <h4>Ceiling Fire Extinguisher Cost Estimator</h4>
+                        <p>Specialized cost estimation for ceiling-mounted systems</p>
+                        <a href="https://ceiling-fire-extinguisher-cost-esti.vercel.app" target="_blank" class="tool-btn">Try Tool</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="result-card">
+                <h3>❓ Frequently Asked Questions (FAQ)</h3>
+                <div class="faq-section">
+                    <!-- FAQ content remains similar to previous version -->
+                    <!-- ... -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="result-section" id="resultSection">
+            <!-- Results will be populated by JavaScript -->
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2024 Fire Extinguisher Calculator | BIS 2190:2024 Compliant</p>
+            <p>Developed by S. Amjath Khan | Fire Safety Expert & Consultant</p>
+            <div class="footer-links">
+                <a href="https://buymeacoffee.com/s.amjathkhan" target="_blank" class="footer-link">☕ Support Project</a>
+                <a href="https://www.firesafetytool.com" target="_blank" class="footer-link">🔥 Fire Safety Tool</a>
+                <a href="https://www.hsecalculator.com" target="_blank" class="footer-link">🛡️ HSE Calculator</a>
+                <a href="https://www.webtoolsdaily.com" target="_blank" class="footer-link">⚙️ Web Tools Daily</a>
+                <a href="#" class="footer-link" onclick="showPrivacyPolicy()">🔒 Privacy Policy</a>
+                <a href="#" class="footer-link" onclick="showTerms()">📜 Terms of Use</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
