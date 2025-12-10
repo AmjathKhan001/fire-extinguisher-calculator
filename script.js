@@ -1,4 +1,4 @@
-// script.js - COMPLETE WORKING VERSION
+// script.js - ACCURATE BIS 2190:2024 CALCULATOR
 console.log('Fire Extinguisher Calculator loading...');
 
 // Global state
@@ -9,9 +9,75 @@ const AppState = {
     selectedExtinguishers: new Map()
 };
 
+// BIS 2190:2024 STANDARDS DATA
+const BISStandards = {
+    // Minimum extinguisher ratings based on hazard level
+    hazardLevels: {
+        low: { rating: '5A', coverage: 300, distance: 20 },      // Offices, Residential
+        moderate: { rating: '10A', coverage: 150, distance: 20 }, // Retail, Hotels
+        high: { rating: '20A', coverage: 100, distance: 15 }      // Industrial, Storage
+    },
+    
+    // Fire class to extinguisher type mapping
+    fireClassExtinguishers: {
+        'A': ['Water', 'Foam', 'ABC Powder'],
+        'B': ['CO₂', 'Foam', 'ABC Powder', 'Clean Agent'],
+        'C': ['CO₂', 'Clean Agent', 'ABC Powder'],
+        'D': ['Special Powder (Class D)', 'Sand', 'Dry Powder'],
+        'F': ['Wet Chemical', 'Class F Foam'],
+        'E': ['AVD (Aerosol)', 'Clean Agent', 'CO₂'],
+        'mixed': ['ABC Powder', 'Multi-purpose']
+    },
+    
+    // Standard extinguisher capacities and costs (₹)
+    extinguisherTypes: {
+        'ABC Powder': [
+            { capacity: '1 KG', rating: '5A:34B', cost: 2500, coverage: 100 },
+            { capacity: '2 KG', rating: '10A:68B', cost: 3200, coverage: 200 },
+            { capacity: '4 KG', rating: '20A:144B', cost: 4500, coverage: 300 },
+            { capacity: '6 KG', rating: '27A:233B', cost: 5500, coverage: 400 },
+            { capacity: '9 KG', rating: '43A:366B', cost: 7000, coverage: 600 }
+        ],
+        'CO₂': [
+            { capacity: '2 KG', rating: '5B', cost: 8500, coverage: 50 },
+            { capacity: '4.5 KG', rating: '22B', cost: 12000, coverage: 100 },
+            { capacity: '6.8 KG', rating: '34B', cost: 15000, coverage: 150 }
+        ],
+        'Foam': [
+            { capacity: '6 L', rating: '13A:89B', cost: 6000, coverage: 200 },
+            { capacity: '9 L', rating: '21A:144B', cost: 7500, coverage: 300 }
+        ],
+        'Water': [
+            { capacity: '9 L', rating: '13A', cost: 4500, coverage: 150 }
+        ],
+        'Wet Chemical': [
+            { capacity: '6 L', rating: '25F', cost: 18000, coverage: 100 }
+        ],
+        'AVD': [
+            { capacity: '1 L', rating: 'E-Class', cost: 20000, coverage: 50 }
+        ]
+    }
+};
+
+// Hazard mapping for different usages
+const usageHazardMapping = {
+    'office': 'low',
+    'residential': 'low',
+    'corridor': 'low',
+    'retail': 'moderate',
+    'hotel': 'moderate',
+    'parking': 'moderate',
+    'kitchen': 'high',
+    'storage': 'high',
+    'laboratory': 'high',
+    'server': 'high',
+    'workshop': 'high',
+    'factory': 'high'
+};
+
 // Initialize everything when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing calculator...');
+    console.log('DOM loaded, initializing BIS 2190:2024 calculator...');
     
     // Initialize FAQ functionality FIRST
     initializeFAQ();
@@ -28,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set default unit
     setUnit('meters');
     
-    console.log('Calculator initialized successfully!');
+    console.log('BIS 2190:2024 Calculator initialized successfully!');
 });
 
 // ========== FAQ FUNCTIONALITY ==========
@@ -58,21 +124,6 @@ function initializeFAQ() {
             
             console.log('FAQ item active:', faqItem.classList.contains('active'));
         });
-    });
-    
-    // Also add keyboard support
-    faqQuestions.forEach(question => {
-        question.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.click();
-            }
-        });
-        
-        // Make it accessible
-        question.setAttribute('tabindex', '0');
-        question.setAttribute('role', 'button');
-        question.setAttribute('aria-expanded', 'false');
     });
 }
 
@@ -229,15 +280,17 @@ function addFloor() {
                             required>
                         <option value="">Select primary usage</option>
                         <option value="office">Office Space</option>
+                        <option value="residential">Residential</option>
                         <option value="retail">Retail/Shop</option>
+                        <option value="hotel">Hotel/Restaurant</option>
                         <option value="kitchen">Kitchen/Canteen</option>
                         <option value="storage">Storage/Warehouse</option>
-                        <option value="residential">Residential</option>
-                        <option value="corridor">Corridor/Common Area</option>
                         <option value="parking">Parking Area</option>
+                        <option value="corridor">Corridor/Common Area</option>
                         <option value="laboratory">Laboratory</option>
                         <option value="server">Server/Data Room</option>
-                        <option value="workshop">Workshop/Factory</option>
+                        <option value="workshop">Workshop</option>
+                        <option value="factory">Factory/Manufacturing</option>
                     </select>
                 </div>
             </div>
@@ -319,6 +372,12 @@ function setUnit(unit) {
     });
 }
 
+function convertToMeters(area, unit) {
+    if (unit === 'meters') return area;
+    if (unit === 'feet') return area * 0.0929; // Convert sq ft to sq m
+    return area;
+}
+
 // ========== EXPERT MODE ==========
 function toggleExpertMode() {
     AppState.expertMode = !AppState.expertMode;
@@ -340,9 +399,9 @@ function toggleExpertMode() {
     }
 }
 
-// ========== CALCULATE REQUIREMENTS ==========
+// ========== CALCULATE REQUIREMENTS (ACCURATE BIS 2190:2024) ==========
 function calculateRequirements() {
-    console.log('Starting calculation...');
+    console.log('Starting BIS 2190:2024 calculation...');
     
     // Validate all required fields
     if (!validateAllFields()) {
@@ -353,40 +412,46 @@ function calculateRequirements() {
     // Show loading state
     const calculateBtn = document.getElementById('calculateBtn');
     const originalText = calculateBtn.innerHTML;
-    calculateBtn.innerHTML = '<span class="spinner"></span> Calculating...';
+    calculateBtn.innerHTML = '<span class="spinner"></span> Calculating as per BIS 2190:2024...';
     calculateBtn.disabled = true;
     
     // Collect form data
     const formData = collectFormData();
     console.log('Form data collected:', formData);
     
-    // Simulate calculation (replace with actual calculation)
+    // Calculate based on BIS standards
     setTimeout(() => {
-        // Generate results
-        const results = generateResults(formData);
-        
-        // Display results
-        displayResults(results);
-        
-        // Show results section
-        const resultSection = document.getElementById('resultSection');
-        if (resultSection) {
-            resultSection.classList.add('active');
-            resultSection.scrollIntoView({ behavior: 'smooth' });
+        try {
+            // Generate accurate results
+            const results = calculateBISRequirements(formData);
+            
+            // Display detailed results
+            displayDetailedResults(results, formData);
+            
+            // Show results section
+            const resultSection = document.getElementById('resultSection');
+            if (resultSection) {
+                resultSection.classList.add('active');
+                resultSection.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            console.log('BIS 2190:2024 Calculation complete!', results);
+            showNotification('Fire safety requirements calculated as per BIS 2190:2024!', 'success');
+            
+        } catch (error) {
+            console.error('Calculation error:', error);
+            showNotification('Error in calculation. Please check your inputs.', 'error');
+        } finally {
+            // Reset button
+            calculateBtn.innerHTML = originalText;
+            calculateBtn.disabled = false;
         }
-        
-        // Reset button
-        calculateBtn.innerHTML = originalText;
-        calculateBtn.disabled = false;
-        
-        console.log('Calculation complete!');
-        showNotification('Fire safety requirements calculated successfully!', 'success');
-        
-    }, 1500);
+    }, 1000);
 }
 
 function validateAllFields() {
     let isValid = true;
+    let firstError = null;
     
     // Check all required fields
     const requiredFields = document.querySelectorAll('[required]');
@@ -395,15 +460,30 @@ function validateAllFields() {
             isValid = false;
             field.style.borderColor = '#e74c3c';
             
-            // Scroll to first error
-            if (isValid === false) {
-                field.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                field.focus();
+            // Track first error for scrolling
+            if (!firstError) {
+                firstError = field;
             }
         } else {
             field.style.borderColor = '';
         }
     });
+    
+    // Check floor areas
+    const floorAreas = document.querySelectorAll('.floor-area');
+    floorAreas.forEach(areaInput => {
+        const area = parseFloat(areaInput.value);
+        if (isNaN(area) || area <= 0) {
+            isValid = false;
+            areaInput.style.borderColor = '#e74c3c';
+            if (!firstError) firstError = areaInput;
+        }
+    });
+    
+    if (!isValid && firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstError.focus();
+    }
     
     return isValid;
 }
@@ -436,10 +516,16 @@ function collectFormData() {
         const usageSelect = section.querySelector('.floor-usage');
         
         if (areaInput && usageSelect) {
+            const area = parseFloat(areaInput.value) || 0;
+            const usage = usageSelect.value;
+            const hazard = usageHazardMapping[usage] || 'moderate';
+            
             data.floors.push({
                 number: floorNum,
-                area: parseFloat(areaInput.value) || 0,
-                usage: usageSelect.value
+                area: area,
+                areaMeters: convertToMeters(area, AppState.currentUnit),
+                usage: usage,
+                hazard: hazard
             });
         }
     });
@@ -447,172 +533,388 @@ function collectFormData() {
     return data;
 }
 
-function generateResults(formData) {
-    // Sample calculation logic
-    const totalArea = formData.floors.reduce((sum, floor) => sum + floor.area, 0);
-    
-    // Calculate based on area (simplified for demo)
-    let extinguishersRequired = Math.ceil(totalArea / 100) * 2;
-    if (extinguishersRequired < 2) extinguishersRequired = 2;
-    
-    // Calculate cost (simplified)
-    const baseCostPerExtinguisher = 5000;
-    const totalCost = extinguishersRequired * baseCostPerExtinguisher;
-    const gst = totalCost * 0.18;
-    const grandTotal = totalCost + gst;
-    
-    return {
-        totalArea: totalArea,
-        totalFloors: formData.floors.length,
+function calculateBISRequirements(formData) {
+    const results = {
         buildingType: formData.building.type,
-        extinguishersRequired: extinguishersRequired,
-        estimatedCost: totalCost,
-        gst: gst,
-        grandTotal: grandTotal,
-        recommendations: getRecommendations(formData)
+        fireRisk: formData.fireRisk,
+        totalFloors: formData.floors.length,
+        floors: [],
+        totalExtinguishers: 0,
+        totalArea: 0,
+        recommendations: [],
+        extinguisherType: '',
+        selectedCapacity: '',
+        perUnitCost: 0,
+        standCost: 0,
+        subtotal: 0,
+        gst: 0,
+        grandTotal: 0
     };
+    
+    // Calculate total area
+    results.totalArea = formData.floors.reduce((sum, floor) => sum + floor.areaMeters, 0);
+    
+    // Determine extinguisher type based on fire risk
+    const extinguisherType = determineExtinguisherType(formData.fireRisk);
+    results.extinguisherType = extinguisherType;
+    
+    // Get available capacities for this extinguisher type
+    const capacities = BISStandards.extinguisherTypes[extinguisherType];
+    if (!capacities) {
+        throw new Error(`No capacities defined for extinguisher type: ${extinguisherType}`);
+    }
+    
+    // Calculate for each floor
+    formData.floors.forEach(floor => {
+        const floorResult = calculateFloorRequirements(floor, extinguisherType, capacities);
+        results.floors.push(floorResult);
+        results.totalExtinguishers += floorResult.extinguishersRequired;
+    });
+    
+    // Select appropriate capacity based on total area and hazard
+    const selectedCapacity = selectOptimalCapacity(results.totalArea, extinguisherType, formData.floors[0]?.hazard);
+    results.selectedCapacity = selectedCapacity;
+    
+    // Get cost for selected capacity
+    const capacityData = capacities.find(cap => cap.capacity === selectedCapacity);
+    if (capacityData) {
+        results.perUnitCost = capacityData.cost;
+    } else {
+        // Default to first capacity if not found
+        results.perUnitCost = capacities[0].cost;
+        results.selectedCapacity = capacities[0].capacity;
+    }
+    
+    // Calculate costs
+    results.standCost = results.totalExtinguishers * 500; // ₹500 per stand
+    results.subtotal = (results.totalExtinguishers * results.perUnitCost) + results.standCost;
+    results.gst = results.subtotal * 0.18;
+    results.grandTotal = results.subtotal + results.gst;
+    
+    // Generate recommendations
+    results.recommendations = generateBISRecommendations(formData, results);
+    
+    return results;
 }
 
-function getRecommendations(formData) {
+function determineExtinguisherType(fireRisk) {
+    switch(fireRisk) {
+        case 'A':
+            return 'Water';  // Best for Class A fires
+        case 'B':
+            return 'CO₂';    // Best for Class B fires
+        case 'C':
+            return 'CO₂';    // Must for electrical fires
+        case 'F':
+            return 'Wet Chemical';  // Must for kitchen fires
+        case 'E':
+            return 'AVD';    // For lithium battery fires
+        case 'mixed':
+        default:
+            return 'ABC Powder';  // Multi-purpose for general use
+    }
+}
+
+function calculateFloorRequirements(floor, extinguisherType, capacities) {
+    const floorResult = {
+        floorNumber: floor.number,
+        floorName: getFloorName(floor.number),
+        area: floor.area,
+        areaMeters: floor.areaMeters,
+        usage: floor.usage,
+        hazard: floor.hazard,
+        extinguishersRequired: 0,
+        extinguisherType: extinguisherType,
+        recommendedCapacity: '',
+        spacing: '',
+        notes: []
+    };
+    
+    // Get hazard level data
+    const hazardData = BISStandards.hazardLevels[floor.hazard] || BISStandards.hazardLevels.moderate;
+    
+    // Calculate based on area coverage (BIS standard)
+    // Each extinguisher covers certain area based on its rating
+    const coveragePerExtinguisher = hazardData.coverage; // m² per extinguisher
+    
+    // Minimum calculation: Area ÷ Coverage per extinguisher
+    let numExtinguishers = Math.ceil(floor.areaMeters / coveragePerExtinguisher);
+    
+    // BIS Minimum requirement: At least 2 extinguishers per floor if area ≥ 100m²
+    if (floor.areaMeters >= 100 && numExtinguishers < 2) {
+        numExtinguishers = 2;
+    }
+    
+    // Additional requirement: Travel distance
+    // Based on 15-20m maximum travel distance
+    const maxTravelDistance = hazardData.distance;
+    const areaPerExtinguisherForDistance = Math.PI * Math.pow(maxTravelDistance, 2);
+    const byDistance = Math.ceil(floor.areaMeters / areaPerExtinguisherForDistance);
+    
+    // Take the higher requirement
+    numExtinguishers = Math.max(numExtinguishers, byDistance);
+    
+    floorResult.extinguishersRequired = numExtinguishers;
+    
+    // Select capacity based on area
+    if (floor.areaMeters < 200) {
+        floorResult.recommendedCapacity = '1 KG';
+    } else if (floor.areaMeters < 500) {
+        floorResult.recommendedCapacity = '2 KG';
+    } else if (floor.areaMeters < 1000) {
+        floorResult.recommendedCapacity = '4 KG';
+    } else {
+        floorResult.recommendedCapacity = '6 KG';
+    }
+    
+    // Special cases
+    if (floor.usage === 'kitchen') {
+        floorResult.extinguisherType = 'Wet Chemical';
+        floorResult.recommendedCapacity = '6 L';
+        floorResult.notes.push('Special Wet Chemical extinguisher required for kitchen fires');
+    } else if (floor.usage === 'server') {
+        floorResult.extinguisherType = 'CO₂';
+        floorResult.notes.push('CO₂ extinguisher required for electrical/data rooms');
+    }
+    
+    floorResult.spacing = `Max ${maxTravelDistance}m travel distance`;
+    
+    return floorResult;
+}
+
+function selectOptimalCapacity(totalArea, extinguisherType, hazardLevel) {
+    const capacities = BISStandards.extinguisherTypes[extinguisherType];
+    if (!capacities) return '4 KG';
+    
+    // Select capacity based on total area
+    if (totalArea < 300) return capacities[0].capacity; // Small
+    if (totalArea < 1000) return capacities[1]?.capacity || capacities[0].capacity; // Medium
+    if (totalArea < 3000) return capacities[2]?.capacity || capacities[1]?.capacity || capacities[0].capacity; // Large
+    
+    return capacities[capacities.length - 1].capacity; // Extra large
+}
+
+function generateBISRecommendations(formData, results) {
     const recommendations = [];
     
-    // Basic recommendations
-    recommendations.push('✓ Minimum 2 extinguishers per floor as per BIS 2190:2024');
-    recommendations.push('✓ Maximum travel distance: 15-20 meters');
-    recommendations.push('✓ Monthly visual inspection required');
-    recommendations.push('✓ Annual maintenance by certified technician');
+    // Basic BIS requirements
+    recommendations.push('✓ As per BIS 2190:2024 Standards');
+    recommendations.push(`✓ Minimum 2 extinguishers per floor (if area ≥ 100m²)`);
+    recommendations.push(`✓ Maximum travel distance: 15-20 meters`);
+    recommendations.push(`✓ Extinguishers must be clearly visible and accessible`);
+    recommendations.push(`✓ Height: 1.5m max from floor level`);
     
-    // Risk-based recommendations
+    // Risk-specific recommendations
     switch(formData.fireRisk) {
         case 'A':
-            recommendations.push('✓ Water or Foam extinguishers recommended');
+            recommendations.push('✓ Water type recommended for wood/paper/textile fires');
             break;
         case 'B':
-            recommendations.push('✓ CO₂ or Foam extinguishers recommended');
+            recommendations.push('✓ CO₂ recommended for flammable liquid fires');
+            recommendations.push('✓ Avoid water on flammable liquids');
             break;
         case 'C':
-            recommendations.push('✓ CO₂ extinguishers mandatory for electrical areas');
+            recommendations.push('✓ CO₂ mandatory for electrical equipment');
+            recommendations.push('✓ Ensure proper ventilation when using CO₂');
             break;
         case 'F':
-            recommendations.push('✓ Wet Chemical extinguishers required for kitchen');
+            recommendations.push('✓ Wet Chemical mandatory for kitchen/cooking oil fires');
+            recommendations.push('✓ Install near cooking appliances');
             break;
     }
+    
+    // Building type specific
+    if (formData.building.height === 'high' || formData.building.height === 'skyscraper') {
+        recommendations.push('✓ Required on every floor including basements');
+        recommendations.push('✓ Staircase and elevator lobby locations critical');
+    }
+    
+    // Maintenance
+    recommendations.push('✓ Monthly visual inspection required');
+    recommendations.push('✓ Annual maintenance by certified technician');
+    recommendations.push('✓ Record keeping mandatory as per BIS');
     
     return recommendations;
 }
 
-function displayResults(results) {
+function displayDetailedResults(results, formData) {
     const resultSection = document.getElementById('resultSection');
     if (!resultSection) return;
     
+    const totalAreaDisplay = results.totalArea.toFixed(0);
+    const unitLabel = AppState.currentUnit === 'meters' ? 'm²' : 'ft²';
+    
     const resultsHTML = `
         <div class="result-card fade-in">
-            <h3>🎯 Your Fire Safety Plan</h3>
+            <h3>🎯 BIS 2190:2024 Fire Safety Plan</h3>
             <div class="info-box">
-                <strong>Calculation Complete!</strong><br><br>
-                Based on your input, here are the fire safety requirements compliant with BIS 2190:2024 standards.
+                <strong>Client:</strong> ${formData.customer.name}<br>
+                <strong>Project:</strong> ${formData.customer.project}<br>
+                <strong>Total Area:</strong> ${totalAreaDisplay} ${unitLabel} | 
+                <strong>Floors:</strong> ${results.totalFloors} | 
+                <strong>Building:</strong> ${formData.building.type.charAt(0).toUpperCase() + formData.building.type.slice(1)}
             </div>
 
             <div class="recommendation-grid">
                 <div class="recommendation-item">
-                    <strong>Total Area</strong>
-                    <div>${results.totalArea.toLocaleString()} ${AppState.currentUnit === 'meters' ? 'm²' : 'ft²'}</div>
+                    <strong>Extinguisher Type</strong>
+                    <div>${results.extinguisherType}</div>
                 </div>
                 <div class="recommendation-item">
-                    <strong>Building Type</strong>
-                    <div>${results.buildingType.charAt(0).toUpperCase() + results.buildingType.slice(1)}</div>
+                    <strong>Recommended Capacity</strong>
+                    <div>${results.selectedCapacity}</div>
                 </div>
                 <div class="recommendation-item">
-                    <strong>Total Floors</strong>
-                    <div>${results.totalFloors}</div>
+                    <strong>Total Units Required</strong>
+                    <div>${results.totalExtinguishers}</div>
                 </div>
                 <div class="recommendation-item">
-                    <strong>Extinguishers Required</strong>
-                    <div>${results.extinguishersRequired} units</div>
+                    <strong>Primary Fire Risk</strong>
+                    <div>Class ${formData.fireRisk}</div>
                 </div>
             </div>
+        </div>
 
-            <div class="result-card" style="margin-top: 20px;">
-                <h3>💰 Cost Estimation</h3>
-                <table class="quotation-table">
-                    <thead>
-                        <tr>
-                            <th>Description</th>
-                            <th>Amount (₹)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Fire Extinguishers (${results.extinguishersRequired} units @ ₹5,000)</td>
-                            <td>₹${results.estimatedCost.toLocaleString()}</td>
-                        </tr>
-                        <tr>
-                            <td>Extinguisher Stands/Brackets</td>
-                            <td>₹${(results.extinguishersRequired * 500).toLocaleString()}</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td><strong>Subtotal</strong></td>
-                            <td><strong>₹${(results.estimatedCost + (results.extinguishersRequired * 500)).toLocaleString()}</strong></td>
-                        </tr>
-                        <tr>
-                            <td>GST @18%</td>
-                            <td>₹${Math.round(results.gst).toLocaleString()}</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td><strong>Grand Total</strong></td>
-                            <td><strong>₹${Math.round(results.grandTotal + (results.extinguishersRequired * 500)).toLocaleString()}</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <div class="info-box" style="margin-top: 20px;">
-                    <strong>Note:</strong> Prices are approximate. Actual costs may vary based on brand, location, and market conditions.
+        <div class="result-card">
+            <h3>🏗️ Floor-wise Requirements</h3>
+            ${results.floors.map(floor => `
+                <div class="floor-section" style="margin: 15px 0; background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <h4>${floor.floorName} Floor - ${floor.usage.charAt(0).toUpperCase() + floor.usage.slice(1)}</h4>
+                    <div class="info-box" style="margin: 10px 0;">
+                        <strong>Specifications:</strong><br>
+                        • Area: ${floor.area.toLocaleString()} ${unitLabel} (${floor.areaMeters.toFixed(0)} m²)<br>
+                        • Hazard Level: ${floor.hazard.toUpperCase()}<br>
+                        • Extinguishers Required: ${floor.extinguishersRequired} × ${floor.extinguisherType}<br>
+                        • Recommended: ${floor.recommendedCapacity} capacity<br>
+                        • Placement: ${floor.spacing}<br>
+                        ${floor.notes.map(note => `• ${note}<br>`).join('')}
+                    </div>
                 </div>
-            </div>
+            `).join('')}
+        </div>
 
-            <div class="result-card">
-                <h3>📋 Safety Recommendations</h3>
-                <div class="info-box">
-                    <strong>BIS 2190:2024 Compliance Checklist:</strong>
-                    <ul style="margin-left: 20px; margin-top: 10px;">
-                        ${results.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-                    </ul>
-                </div>
-                
-                <div class="warning-box" style="margin-top: 20px;">
-                    <strong>⚠️ Important:</strong> This is a preliminary calculation. Always consult with a certified fire safety professional for final assessment and installation.
-                </div>
+        <div class="result-card">
+            <h3>💰 Detailed Quotation</h3>
+            
+            <div class="info-box">
+                <strong>Price Breakdown (Approximate Market Rates):</strong>
             </div>
             
-            <div class="button-group">
-                <button class="btn btn-secondary" onclick="downloadPDF()">
-                    📄 Download PDF Quotation
-                </button>
-                <button class="btn btn-success" onclick="downloadExcel()">
-                    📊 Download Excel Report
-                </button>
-                <button class="btn" onclick="window.print()">
-                    🖨️ Print This Report
-                </button>
-                <button class="btn" onclick="resetCalculator()">
-                    🔄 New Calculation
-                </button>
+            <table class="quotation-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Specifications</th>
+                        <th>Unit Price (₹)</th>
+                        <th>Quantity</th>
+                        <th>Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>${results.extinguisherType} Fire Extinguisher</td>
+                        <td>${results.selectedCapacity} | BIS Certified</td>
+                        <td>₹${results.perUnitCost.toLocaleString()}</td>
+                        <td>${results.totalExtinguishers}</td>
+                        <td>₹${(results.totalExtinguishers * results.perUnitCost).toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td>Wall Mount Stand/Bracket</td>
+                        <td>Powder coated, wall mounted</td>
+                        <td>₹500</td>
+                        <td>${results.totalExtinguishers}</td>
+                        <td>₹${results.standCost.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td>Basic Installation</td>
+                        <td>Mounting and positioning</td>
+                        <td>₹200</td>
+                        <td>${results.totalExtinguishers}</td>
+                        <td>₹${(results.totalExtinguishers * 200).toLocaleString()}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="4" style="text-align: right;"><strong>Subtotal (excluding GST)</strong></td>
+                        <td><strong>₹${Math.round(results.subtotal + (results.totalExtinguishers * 200)).toLocaleString()}</strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="text-align: right;">GST @18%</td>
+                        <td>₹${Math.round((results.subtotal + (results.totalExtinguishers * 200)) * 0.18).toLocaleString()}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="4" style="text-align: right;"><strong>Grand Total (Approx.)</strong></td>
+                        <td><strong>₹${Math.round((results.subtotal + (results.totalExtinguishers * 200)) * 1.18).toLocaleString()}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="info-box" style="margin-top: 20px;">
+                <strong>💡 Notes:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Prices are approximate and may vary ±15% based on brand and location</li>
+                    <li>Annual Maintenance Contract: ₹300-500 per extinguisher</li>
+                    <li>Hydrostatic testing required every 5 years: ₹800-1200 per unit</li>
+                    <li>Training for staff: ₹2000-5000 per session</li>
+                    <li>All equipment must be BIS 2190:2024 certified</li>
+                </ul>
             </div>
+        </div>
+
+        <div class="result-card">
+            <h3>📋 BIS 2190:2024 Compliance Checklist</h3>
+            <div class="info-box">
+                <strong>Mandatory Requirements:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    ${results.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                </ul>
+            </div>
+            
+            <div class="warning-box" style="margin-top: 20px;">
+                <strong>⚠️ Professional Advice Required:</strong><br>
+                This calculator provides estimates based on BIS standards. For actual installation, consult with:
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Certified Fire Safety Consultant</li>
+                    <li>Licensed Fire Extinguisher Supplier</li>
+                    <li>Local Fire Department for approvals</li>
+                    <li>Insurance company for compliance</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-secondary" onclick="downloadPDF()">
+                📄 Download Detailed Quotation
+            </button>
+            <button class="btn btn-success" onclick="downloadExcel()">
+                📊 Download Floor-wise Report
+            </button>
+            <button class="btn" onclick="window.print()">
+                🖨️ Print Complete Report
+            </button>
+            <button class="btn" onclick="resetCalculator()">
+                🔄 Start New Calculation
+            </button>
         </div>
     `;
     
     resultSection.innerHTML = resultsHTML;
 }
 
+// ========== HELPER FUNCTIONS ==========
+function getFloorName(number) {
+    const names = ['Ground', 'First', 'Second', 'Third', 'Fourth', 'Fifth', 
+                  'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth'];
+    return names[number - 1] || `Floor ${number}`;
+}
+
 // ========== EXPORT FUNCTIONS ==========
 function downloadPDF() {
-    showNotification('PDF download feature will be available soon!', 'info');
-    // In production, implement actual PDF generation
+    showNotification('PDF generation feature coming soon!', 'info');
+    // Implement actual PDF generation here
 }
 
 function downloadExcel() {
-    showNotification('Excel download feature will be available soon!', 'info');
-    // In production, implement actual Excel generation
+    showNotification('Excel export feature coming soon!', 'info');
+    // Implement actual Excel generation here
 }
 
 // ========== UTILITY FUNCTIONS ==========
@@ -669,6 +971,9 @@ function resetCalculator() {
             section.classList.remove('active');
         });
         document.getElementById('step1').classList.add('active');
+        
+        // Reset unit
+        setUnit('meters');
         
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -736,4 +1041,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-console.log('Fire Extinguisher Calculator script loaded successfully!');
+console.log('BIS 2190:2024 Fire Extinguisher Calculator loaded successfully!');
